@@ -1,11 +1,8 @@
 <div>
-  <div class="radio">
+  <div class="radio"
+       *ngFor="let radio of radios; let i = index"
+        (click)="playOrStop(i)">
     <div class="image"></div>
-    <div class="title">Radio Bob</div>
-  </div>
-
-  <div class="radio">
-    <div class="image"></div>
-    <div class="title">WDR 2</div>
+    <div class="title">{{radio.title}}</div>
   </div>
 </div>
