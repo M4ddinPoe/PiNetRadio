@@ -3,10 +3,12 @@ import { NgModule } from '@angular/core';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
+import { RadioListComponent } from './components/radio-list/radio-list.component';
 
 @NgModule({
   declarations: [
-    AppComponent
+    AppComponent,
+    RadioListComponent
   ],
   imports: [
     BrowserModule,
