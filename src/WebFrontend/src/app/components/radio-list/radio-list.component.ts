@@ -26,10 +26,10 @@ export class RadioListComponent implements OnInit {
 
   playOrStop(num: number): void {
     if (this.isPlaying) {
-      console.log('stop');
+      this.radioRepository.playRadio(num);
     }
     else {
-      console.log('play');
+      this.radioRepository.stopRadio(num);
     }
 
     this.isPlaying = !this.isPlaying;

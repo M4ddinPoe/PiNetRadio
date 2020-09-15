@@ -30,4 +30,38 @@ export class RadioRepository {
       console.log('Error: ' , error);
     }
   }
+
+  public async playRadio(num: number): Promise<any> {
+    try {
+      const url = this.webAPIUrl + 'radios/' + num + '/play';
+
+      const headers: HttpHeaders = new HttpHeaders()
+        .set('accept', 'application/json');
+
+      const response: any =
+      await this.httpClient.get(url, {headers: headers})
+          .toPromise();
+
+      return response;
+    } catch (error) {
+      console.log('Error: ' , error);
+    }
+  }
+
+  public async stopRadio(num: number): Promise<any> {
+    try {
+      const url = this.webAPIUrl + 'radios/' + num + '/stop';
+
+      const headers: HttpHeaders = new HttpHeaders()
+        .set('accept', 'application/json');
+
+      const response: any =
+        await this.httpClient.get(url, {headers: headers})
+          .toPromise();
+
+      return response;
+    } catch (error) {
+      console.log('Error: ' , error);
+    }
+  }
 }
