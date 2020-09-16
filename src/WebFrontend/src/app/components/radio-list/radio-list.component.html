@@ -1,8 +1,29 @@
-<div>
-  <div class="radio"
-       *ngFor="let radio of radios; let i = index"
-        (click)="playOrStop(i)">
-    <div class="image"></div>
-    <div class="title">{{radio.title}}</div>
+<div class="main">
+  <h1>Pi - NetRadio</h1>
+  <div class="radio-list">
+    <h2>Radios</h2>
+    <div class="radio"
+         *ngFor="let radio of radios; let i = index"
+          (click)="playOrStop(i)">
+      <div class="image"></div>
+      <div class="title">{{radio.title}}</div>
+    </div>
+  </div>
+
+  <div class="player">
+    <div class="button"></div>
+    <div class="title">
+      Radio Bob
+    </div>
+  </div>
+
+  <div class="volume">
+    <div class="up">
+      +
+    </div>
+    <div class="slider"></div>
+    <div class="down">
+      -
+    </div>
   </div>
 </div>

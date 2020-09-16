@@ -1,0 +1,32 @@
+.main {
+  margin: 1vh 4vh;
+}
+
+.radio {
+  width: 18vh;
+  height: 18vh;
+
+  border: 2px solid #b0b0b0;
+  background: #ececec;
+
+  margin: 1vh;
+  float: left;
+  overflow: scroll;
+
+  cursor: pointer;
+}
+
+.radio .image {
+  height: 14vh;
+}
+
+.radio .title {
+  color: #393939;
+  text-align: center;
+  font-size: 3vh;
+}
+
+h2 {
+  font-family: Ubuntu;
+  font-weight: lighter;
+}
