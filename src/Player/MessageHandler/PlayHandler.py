@@ -30,6 +30,9 @@ class PlayHandler:
         elif playMessage['command'] == 'stop':
             print(" [..] player.stop")
             self.player.stop()
+        elif playMessage['command'] == 'volume':
+            print(" [..] player.volume: %i" %playMessage['volume'])
+            self.player.set_volume(playMessage['volume'])
 
     def start(self):
         self.channel.basic_consume(

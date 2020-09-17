@@ -37,10 +37,21 @@ def play_radio(radio_id):
     )
     return response
 
-@app.route('/api/radios/<int:radio_id>/stop', methods=['GET'])
+@app.route('/api/radios/stop', methods=['GET'])
 @cross_origin()
-def stop_radio(radio_id):
+def stop_radio():
     send_message('stop', '')
+
+    response = make_response(
+        '',
+        200,
+    )
+    return response
+
+@app.route('/api/radios/volume/<int:volume', methods=['GET'])
+@cross_origin()
+def change_volume(volume):
+    send_message('volume', volume)
 
     response = make_response(
         '',

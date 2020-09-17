@@ -14,3 +14,9 @@ class RadioPlayer:
 
     def stop(self):
         self.player.stop()
+
+    def set_volume(self, volume):
+        if volume < 0 or volume > 100:
+            raise Exception('Volume must be between 0 and 100')
+
+        self.player.audio_set_volume(volume)
