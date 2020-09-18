@@ -25,14 +25,15 @@ class PlayHandler:
         playMessage = json.loads(body)
 
         if playMessage['command'] == 'play':
-            print(" [..] player.start: %s" % playMessage['url'])
-            self.player.play(playMessage['url'])
+            print(" [..] player.start: %s" % str(playMessage['data']))
+            self.player.play(playMessage['data'])
         elif playMessage['command'] == 'stop':
             print(" [..] player.stop")
             self.player.stop()
         elif playMessage['command'] == 'volume':
-            print(" [..] player.volume: %i" %playMessage['volume'])
-            self.player.set_volume(playMessage['volume'])
+            print(" [..] player.volume: %s" % str(playMessage['data']))
+            volume = int(playMessage['data'])
+            self.player.set_volume(volume)
 
     def start(self):
         self.channel.basic_consume(

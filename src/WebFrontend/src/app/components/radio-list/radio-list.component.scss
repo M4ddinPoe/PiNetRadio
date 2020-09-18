@@ -16,23 +16,98 @@
 
 .header {
   grid-area: header;
-  background: rgba(255, 255, 255, 0.1);
 }
 
 .header h1 {
-  margin: 0.5em 1em;
+  margin: 0.5em 0.2em;
   font-size: 3em;
   font-stretch: ultra-expanded;
 }
 
 .radio-list {
   grid-area: radio-list;
+
+  margin-left: 0.4em;
+}
+
+.radios {
+  webkit-overflow-scrolling: touch;
+  height:30vh;
+  overflow: auto;
+  white-space: nowrap;
+}
+
+.radio-list h2 {
+  font-family: Ubuntu;
+  font-weight: lighter;
+
+  margin-left: 0.2em;
+}
+
+.radio {
+  width: 18vh;
+  height: 18vh;
+
+  border: 2px solid #b0b0b0;
+  background: #ececec;
+
+  margin: 1vh;
+  display: inline-block;
+
+  cursor: pointer;
+}
+
+.radio .image {
+  height: 14vh;
+}
+
+.radio .image img {
+  height: 13vh;
+}
+
+.radio .title {
+  color: #393939;
+  text-align: center;
+  font-size: 1em;
 }
 
 .player {
   grid-area: player;
 
+  display: grid;
+  grid-template-columns:20% 80%;
+  grid-template-areas:
+    "button title";
   background: rgba(255, 255, 255, 0.1);
+}
+
+.player .button {
+  grid-area: button;
+  cursor: pointer;
+
+  margin: 1em;
+  height: 5em;
+  width: 5em;
+
+  z-index: 99;
+}
+
+.player object {
+  grid-area: button;
+
+  margin: 1em;
+  height: 5em;
+  width: 5em;
+
+  cursor: pointer;
+}
+
+.player .title {
+  grid-area: title;
+
+  margin-top: 1.1em;
+  font-size: 2em;
+  font-stretch: ultra-expanded;
 }
 
 .volume {
@@ -42,7 +117,6 @@
   background: rgba(255, 255, 255, 0.2);
 
   grid-template-rows: 15% 70% 15%;
-  /*grid-template-columns:20% 60% 20%;*/
   grid-template-areas:
     "volume-up"
     "slider"
@@ -56,32 +130,17 @@
   font-size: 4em;
 
   cursor: pointer;
-  background: rgba(255, 255, 255, 0.2);
 }
 
 .volume .slider {
   height: 100%;
+  width: 100%;
   grid-area: slider;
-
-  overflow: hidden;
 }
 
 .volume .slider input[type="range"] {
 
-  position: relative;
-  top: 13em;
-  right: 9.1em;
-  -webkit-transform: rotate(90deg);
-
-  -webkit-appearance: none;  /* Override default CSS styles */
-  appearance: none;
-  width: 25em; /* Full-width */
-  height: 2em; /* Specified height */
-  background: #d3d3d3; /* Grey background */
-  outline: none; /* Remove outline */
-  opacity: 0.7; /* Set transparency (for mouse-over effects on hover) */
-  -webkit-transition: .2s; /* 0.2 seconds transition on hover */
-  transition: opacity .2s;
+  -webkit-appearance: slider-vertical; /* WebKit */
 }
 
 .volume .down {
@@ -91,34 +150,5 @@
   font-size: 4em;
 
   cursor: pointer;
-  background: rgba(255, 255, 255, 0.2);
 }
 
-.radio {
-  width: 18vh;
-  height: 18vh;
-
-  border: 2px solid #b0b0b0;
-  background: #ececec;
-
-  margin: 1vh;
-  float: left;
-  overflow: scroll;
-
-  cursor: pointer;
-}
-
-.radio .image {
-  height: 14vh;
-}
-
-.radio .title {
-  color: #393939;
-  text-align: center;
-  font-size: 3em;
-}
-
-h2 {
-  font-family: Ubuntu;
-  font-weight: lighter;
-}

@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import {RadioRepository} from '../../Repositories/RadioRepository';
 import {Radio} from '../../../models/Radio';
+import {LocalStorageRepository} from "../../repositories/LocalStorageRepository";
 
 @Component({
   selector: 'radio-list',
@@ -9,30 +10,61 @@ import {Radio} from '../../../models/Radio';
 })
 export class RadioListComponent implements OnInit {
 
-  private radioRepository: RadioRepository;
-  private isPlaying = false;
-
   public radios: Array<Radio>;
+  public currentRadio: Radio;
+  public volume = 50;
+  public isPlaying = false;
 
-  constructor(radioRepository: RadioRepository) {
+  private radioRepository: RadioRepository;
+  private localStorage: LocalStorageRepository;
+
+  constructor(radioRepository: RadioRepository,
+    localStorage: LocalStorageRepository) {
     this.radioRepository = radioRepository;
+    this.localStorage = localStorage;
   }
 
   ngOnInit(): void {
     this.radioRepository.getRadios().then((radios: Array<Radio>): void => {
       this.radios = radios;
     });
+
+    this.currentRadio = this.localStorage.getLastRadio();
+    this.volume = this.localStorage.getLastVolume();
   }
 
-  playOrStop(num: number): void {
+  public async playRadio(radio: Radio): Promise<void> {
+    await this.radioRepository.playRadio(radio.id);
+    this.currentRadio = radio;
+    this.isPlaying = true;
+
+    this.localStorage.setLastRadio(this.currentRadio);
+  }
+
+  public async playOrStop(): Promise<void> {
     if (this.isPlaying) {
-      this.radioRepository.playRadio(num);
+      await this.radioRepository.stopRadio();
     }
     else {
-      this.radioRepository.stopRadio(num);
+      await this.radioRepository.playRadio(0);
     }
 
     this.isPlaying = !this.isPlaying;
+  }
+
+  public async volumeUp(): Promise<void> {
+    this.volume = this.volume + 2;
+    await this.updateVolume();
+  }
+
+  public async volumeDown(): Promise<void> {
+    this.volume = this.volume - 2;
+    await this.updateVolume();
+  }
+
+  public async updateVolume(): Promise<void> {
+    await this.radioRepository.setVolume(this.volume);
+    this.localStorage.setLastVolume(this.volume);
   }
 
 }

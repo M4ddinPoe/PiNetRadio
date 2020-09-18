@@ -7,6 +7,7 @@ import { AppComponent } from './app.component';
 import { RadioListComponent } from './components/radio-list/radio-list.component';
 import {RadioRepository} from './Repositories/RadioRepository';
 import {HttpClientModule} from '@angular/common/http';
+import {FormsModule} from "@angular/forms";
 
 @NgModule({
   declarations: [
@@ -16,7 +17,8 @@ import {HttpClientModule} from '@angular/common/http';
   imports: [
     BrowserModule,
     AppRoutingModule,
-    HttpClientModule
+    HttpClientModule,
+    FormsModule
   ],
   providers: [RadioRepository],
   bootstrap: [AppComponent]

@@ -4,7 +4,7 @@ from flask_cors import CORS, cross_origin
 from src.Api.RadioLoader import RadioLoader
 from src.Api.RadiosRpcClient import send_message
 
-app = Flask(__name__)
+app = Flask(__name__, static_url_path='/static')
 cors = CORS(app)
 app.config['CORS_HEADERS'] = 'Content-Type'
 
@@ -28,7 +28,7 @@ def get_radios():
 @cross_origin()
 def play_radio(radio_id):
 
-    radio = radios[radio_id]
+    radio = get_item_with_id(radio_id)
     send_message('play', radio['url'])
 
     response = make_response(
@@ -48,7 +48,7 @@ def stop_radio():
     )
     return response
 
-@app.route('/api/radios/volume/<int:volume', methods=['GET'])
+@app.route('/api/radios/volume/<int:volume>', methods=['GET'])
 @cross_origin()
 def change_volume(volume):
     send_message('volume', volume)
@@ -58,3 +58,11 @@ def change_volume(volume):
         200,
     )
     return response
+
+
+def get_item_with_id(id):
+    for radio in radios:
+        if radio['id'] == id:
+            return radio
+
+    return None
