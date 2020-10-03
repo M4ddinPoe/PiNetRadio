@@ -1,9 +1,12 @@
 import pika
 import json
+import logging
 from src.Player.Core.RadioPlayer import RadioPlayer
 
 class PlayHandler:
     def __init__(self):
+        self.logger = logging.getLogger('radio_player')
+        self.logger.info('initializing play handle')
         self.player = RadioPlayer()
 
         self.connection = pika.BlockingConnection(
@@ -17,26 +20,35 @@ class PlayHandler:
 
         self.channel.queue_bind(exchange='radio-player', queue=self.queue_name)
 
-        print(' [*] Waiting for logs. To exit press CTRL+C')
+        self.logger.info(' [*] Waiting for commands.')
+        print('To exit press CTRL+C')
 
     def callback(self, ch, method, properties, body):
-        print(" [x] %r" % body)
+        try:
+            self.logger.info('received message')
+            self.logger.debug(" [x] %r" % body)
 
-        playMessage = json.loads(body)
+            playMessage = json.loads(body)
 
-        if playMessage['command'] == 'play':
-            print(" [..] player.start: %s" % str(playMessage['data']))
-            self.player.play(playMessage['data'])
-        elif playMessage['command'] == 'stop':
-            print(" [..] player.stop")
-            self.player.stop()
-        elif playMessage['command'] == 'volume':
-            print(" [..] player.volume: %s" % str(playMessage['data']))
-            volume = int(playMessage['data'])
-            self.player.set_volume(volume)
+            if playMessage['command'] == 'play':
+                self.logger.info(f" [..] player.start: {str(playMessage['data'])}")
+                self.player.play(playMessage['data'])
+            elif playMessage['command'] == 'stop':
+                self.logger.info(f" [..] player.stop")
+                self.player.stop()
+            elif playMessage['command'] == 'volume':
+                self.logger.info(f" [..] player.volume: {str(playMessage['data'])}")
+                volume = int(playMessage['data'])
+                self.player.set_volume(volume)
+        except:
+            logging.error('could not execute command')
 
     def start(self):
-        self.channel.basic_consume(
-            queue=self.queue_name, on_message_callback=self.callback, auto_ack=True)
+        try:
+            self.logger.info('player started')
+            self.channel.basic_consume(
+                queue=self.queue_name, on_message_callback=self.callback, auto_ack=True)
 
-        self.channel.start_consuming()
+            self.channel.start_consuming()
+        except:
+            self.logger.error('unable to start player')
