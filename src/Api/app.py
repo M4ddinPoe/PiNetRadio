@@ -94,6 +94,28 @@ def change_volume(volume):
         logging.error(f'/api/radios/volume/{volume}/')
         return make_response('', 500)
 
+@app.route('/api/system/shutdown', methods=['GET'])
+@cross_origin()
+def change_volume():
+    try:
+        logging.debug(f'/api/system/shutdown/ called')
+        send_message('shutdown', '')
+
+        response = make_response(
+            '',
+            200,
+        )
+        return response
+    except:
+        logging.error(f'/api/system/shutdown/')
+        return make_response('', 500)
+
+# GET /api/info
+# Info
+#   status: stoped, playing, loading
+#   radio: <int>
+#   information: <string>
+
 
 def get_item_with_id(id):
     for radio in radios:

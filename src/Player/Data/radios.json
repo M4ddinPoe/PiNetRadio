@@ -1,0 +1,38 @@
+[
+  {
+    "id": 1,
+    "title": "Radio Bob",
+    "url": "https://bob.hoerradar.de/radiobob-national-mp3-hq?sABC=5s5q38q2%231%23qo670p1pq86909209qr4n2q0p7p1qn1q%23ubzrcntr&mode=preroll&aw_0_req.gdpr=true&aw_0_1st.kuid=kppidff_NpCNY5KD&aw_0_1st.ksg=[]&listenerid=db670c1cd86909209de4a2d0c7c1da1d&awparams=companionAds:true&amsparams=playerid:homepage;skey:1599944914",
+    "image": "radio_bob.png"
+  },
+  {
+    "id": 2,
+    "title": "EinsLive",
+    "url": "https://wdr-1live-live.sslcast.addradio.de/wdr/1live/live/mp3/128/stream.mp3?ar-key=BcG5DcAgEATAYiwRIvY-9gKKwSdTggNX75l34Wu1KB3IDo7O9iy4SpAAFH6pVYzct5Ql_XBIGI_uWZE2PX4",
+    "image": "radio_einslive.png"
+   },
+  {
+    "id": 3,
+    "title": "WDR 2",
+    "url": "https://wdr2-lh.akamaihd.net/i/wdr2_rheinland@349349/index_1_a-p.m3u8?sd=4&set-segment-duration=responsive&rebase=on",
+    "image": "radio_wdr2.png"
+  },
+  {
+    "id": 4,
+    "title": "WDR 3",
+    "url": "https://wdr-wdr3-live.icecastssl.wdr.de/wdr/wdr3/live/mp3/128/stream.mp3",
+    "image": "radio_wdr3.png"
+  },
+  {
+    "id": 5,
+    "title": "WDR 4",
+    "url": "https://wdr-wdr4-live.icecastssl.wdr.de/wdr/wdr4/live/mp3/128/stream.mp3",
+    "image": "radio_wdr4.png"
+  },
+  {
+    "id": 6,
+    "title": "NRK P3",
+    "url": "http://lyd.nrk.no/nrk_radio_p3_mp3_h",
+    "image": "radio_nrkp3.png"
+  }
+]

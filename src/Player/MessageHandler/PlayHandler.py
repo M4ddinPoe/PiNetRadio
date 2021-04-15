@@ -11,6 +11,7 @@ class PlayHandler:
 
         self.connection = pika.BlockingConnection(
             pika.ConnectionParameters(host='localhost'))
+
         self.channel = self.connection.channel()
 
         self.channel.exchange_declare(exchange='radio-player', exchange_type='fanout')
@@ -40,6 +41,21 @@ class PlayHandler:
                 self.logger.info(f" [..] player.volume: {str(playMessage['data'])}")
                 volume = int(playMessage['data'])
                 self.player.set_volume(volume)
+            elif playMessage['command'] == 'info':
+                self.logger.info(f" [..] player.info")
+                info = self.player.get_info()
+
+                ch.basic_publish(exchange='',
+                                 routing_key=props.reply_to,
+                                 properties=pika.BasicProperties(correlation_id=props.correlation_id),
+                                 body=info
+                                 )
+
+                ch.basic_ack(delivery_tag=method.delivery_tag)
+
+            elif playMessage['command'] == 'shutdown':
+                self.logger.info(f" [..] system.shutdown")
+                self.player.shutdown()
         except:
             logging.error('could not execute command')
 
