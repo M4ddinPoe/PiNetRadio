@@ -1,17 +1,17 @@
 from src.Player.Core.RadioPlayer import RadioPlayer
-from src.Player.Core.RadioLoader import RadioLoader
+from src.Player.Repository.RadioPlayerRepository import RadioPlayerRepository
 
 
 class RadioPlayerConsole:
     def __init__(self, data_path):
-        radio_loader = RadioLoader(data_path)
-        self.radio_player = RadioPlayer(radio_loader)
+        repository = RadioPlayerRepository(data_path)
+        self.radio_player = RadioPlayer(repository)
 
         self.commands = {'show': self.show_radios,
                          'play': self.play,
                          'stop': self.stop,
                          'volume': self.set_volume,
-                         'status': self.show_status}
+                         'info': self.show_info}
 
     def run(self):
 
@@ -40,9 +40,14 @@ class RadioPlayerConsole:
     def set_volume(self, volume):
         self.radio_player.set_volume(volume)
 
-    def show_status(self, parameter):
-        status = self.radio_player.get_status()
-        print(status.to_text())
+    def show_info(self, parameter):
+        info = self.radio_player.get_info()
+        if info.radio is not None:
+            radio = info.radio.title
+        else:
+            radio = '-'
+
+        print(f'{info.status}: {radio} at volume {info.volume}')
 
     @staticmethod
     def _read_input():
@@ -57,5 +62,5 @@ class RadioPlayerConsole:
             return parts[0], int(parts[1])
 
 
-app = RadioPlayerConsole('../Data/radios.json')
+app = RadioPlayerConsole('../Data')
 app.run()
