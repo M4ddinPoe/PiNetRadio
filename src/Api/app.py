@@ -2,9 +2,12 @@
 import logging
 from flask import Flask, jsonify, make_response
 from flask_cors import CORS, cross_origin
+
+from src.Api.RabbitRpcMessageClient import RabbitRpcMessageClient
 from src.Api.RadioLoader import RadioLoader
 from src.Api.RadiosRpcClient import send_message
 from src.Logger.Logger import configure_logging
+from src.Messages.RadiosRequest import RadiosRequest
 
 configure_logging('piNetRadio-Api')
 logging.info('api starting.')
@@ -22,14 +25,19 @@ try:
 except:
     logging.error('could not load radios.')
 
+rpc_message_client = RabbitRpcMessageClient('localhost', 'radio-player-rpc')
 
 @app.route('/api/radios')
 @cross_origin()
 def get_radios():
     try:
         logging.debug('/api/radios called')
+
+        request = RadiosRequest()
+        response = rpc_message_client.call(request)
+
         response = make_response(
-            jsonify(radios),
+            jsonify(response),
             200,
         )
         return response
@@ -96,7 +104,7 @@ def change_volume(volume):
 
 @app.route('/api/system/shutdown', methods=['GET'])
 @cross_origin()
-def change_volume():
+def shutdown():
     try:
         logging.debug(f'/api/system/shutdown/ called')
         send_message('shutdown', '')

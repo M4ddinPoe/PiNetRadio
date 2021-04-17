@@ -8,7 +8,7 @@ from src.Messages.ShutdownResponse import ShutdownResponse
 from src.Messages.StopResponse import StopResponse
 
 
-class PlayerRpcMessageServer:
+class PlayerMessageHandler:
 
     def __init__(self, rpc_message_server, player):
         self.handler_map = {

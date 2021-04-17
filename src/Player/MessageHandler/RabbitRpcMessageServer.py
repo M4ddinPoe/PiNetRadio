@@ -18,14 +18,13 @@ class RabbitRpcMessageServer:
     def start(self, message_handler):
         self.message_handler = message_handler
         self.channel.basic_qos(prefetch_count=1)
-        self.channel.basic_consume(queue=self.queue_name, on_message_callback=self.handle_message())
+        self.channel.basic_consume(queue=self.queue_name, on_message_callback=self.handle_message)
 
-        self.logger.info(" [x] Awaiting RPC requests")
         self.channel.start_consuming()
 
     def handle_message(self, ch, method, props, body):
-        self.logger.info('received message')
-        self.logger.debug(" [x] %r" % body)
+        #self.logger.info('received message')
+        #self.logger.debug(" [x] %r" % body)
 
         message = RadioPlayerRpcMessage.from_json(json.loads(body))
 
