@@ -1,23 +1,16 @@
-import pika
 import logging
-import json
 
 from src.Messages.ChangeVolumeResponse import ChangeVolumeResponse
 from src.Messages.InfoResponse import InfoResponse
 from src.Messages.PlayResponse import PlayResponse
-from src.Messages.RadioPlayerRpcMessage import RadioPlayerRpcMessage
 from src.Messages.RadiosResponse import RadiosResponse
+from src.Messages.ShutdownResponse import ShutdownResponse
 from src.Messages.StopResponse import StopResponse
-from src.Player.Core.RadioPlayer import RadioPlayer
-
-
-class ShutdownResonse:
-    pass
 
 
 class PlayerRpcMessageServer:
 
-    def __init__(self):
+    def __init__(self, rpc_message_server, player):
         self.handler_map = {
             'PlayRequest': self._handle_play_request,
             'RadiosRequest': self._handle_radios_request,
@@ -29,38 +22,16 @@ class PlayerRpcMessageServer:
 
         self.logger = logging.getLogger('radio_player')
         self.logger.info('initializing play handle')
-        self.player = RadioPlayer()
-
-        connection = pika.BlockingConnection(
-            pika.ConnectionParameters(host='localhost'))
-
-        self.channel = connection.channel()
-        self.channel.queue_declare(queue='radio_player_rpc_queue')
+        self.player = player
 
         self.logger.info(' [*] Waiting for commands.')
+        rpc_message_server.start(self.handle_message)
+        self.logger.info(" [x] Awaiting RPC requests")
         print('To exit press CTRL+C')
 
-    def start(self):
-        self.channel.basic_qos(prefetch_count=1)
-        self.channel.basic_consume(queue='radio_player_rpc_queue', on_message_callback=self.handle_message())
-
-        self.logger.info(" [x] Awaiting RPC requests")
-        self.channel.start_consuming()
-
-    def handle_message(self, ch, method, props, body):
-        self.logger.info('received message')
-        self.logger.debug(" [x] %r" % body)
-
-        message = RadioPlayerRpcMessage.from_json(json.loads(body))
-
-        response = self.handler_map[message.data_type](message.data)
-        response_data = json.dumps(response, default=lambda o: o.__dict__)
-
-        ch.basic_publish(exchange='',
-                         routing_key=props.reply_to,
-                         properties=pika.BasicProperties(correlation_id=props.correlation_id),
-                         body=str(response_data))
-        ch.basic_ack(delivery_tag=method.delivery_tag)
+    def handle_message(self, request):
+        response = self.handler_map[request.data_type](request.data)
+        return response
 
     def _handle_play_request(self, play_request):
         self.player.play(play_request.id)
@@ -84,4 +55,4 @@ class PlayerRpcMessageServer:
 
     def _handle_shutdown_request(self, shutdown):
         self.player.shutdown()
-        return ShutdownResonse()
+        return ShutdownResponse()
