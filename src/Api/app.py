@@ -83,9 +83,10 @@ def stop_radio():
         )
 
         return api_response
-    except:
-        logging.error('/api/radios/stop/')
-        return make_response('', 500)
+    except Exception as e:
+        message = 'error in /radios' + str(e)
+        logging.error(message)
+        return make_response(message, 500)
 
 
 @app.route('/api/radios/volume/<int:volume>', methods=['GET'])
@@ -105,9 +106,10 @@ def change_volume(volume):
         )
 
         return api_response
-    except:
-        logging.error(f'/api/radios/volume/{volume}/')
-        return make_response('', 500)
+    except Exception as e:
+        message = 'error in /radios' + str(e)
+        logging.error(message)
+        return make_response(message, 500)
 
 @app.route('/api/system/shutdown', methods=['GET'])
 @cross_origin()
@@ -126,6 +128,7 @@ def shutdown():
         )
 
         return api_response
-    except:
-        logging.error(f'/api/system/shutdown/')
-        return make_response('', 500)
+    except Exception as e:
+        message = 'error in /radios' + str(e)
+        logging.error(message)
+        return make_response(message, 500)
