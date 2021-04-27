@@ -21,6 +21,7 @@ The user interface connects with the api over http and returns the configuration
 
 ```
 pip install flask
+pip install flask-cors
 pip install pika
 pip install python-vlc 
 ```

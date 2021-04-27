@@ -4,10 +4,12 @@ from flask import Flask, jsonify, make_response
 from flask_cors import CORS, cross_origin
 
 from src.Api.RabbitRpcMessageClient import RabbitRpcMessageClient
-from src.Api.RadioLoader import RadioLoader
-from src.Api.RadiosRpcClient import send_message
 from src.Logger.Logger import configure_logging
+from src.Messages.ChangeVolumeRequest import ChangeVolumeRequest
+from src.Messages.PlayRequest import PlayRequest
 from src.Messages.RadiosRequest import RadiosRequest
+from src.Messages.ShutdownRequest import ShutdownRequest
+from src.Messages.StopRequest import StopRequest
 
 configure_logging('piNetRadio-Api')
 logging.info('api starting.')
@@ -18,12 +20,12 @@ app.config['CORS_HEADERS'] = 'Content-Type'
 
 logging.info('api started')
 
-try:
-    radios = RadioLoader().load()
-    logging.debug('loaded radios:')
-    logging.debug(radios)
-except:
-    logging.error('could not load radios.')
+#try:
+#    radios = RadioLoader().load()
+#    logging.debug('loaded radios:')
+#    logging.debug(radios)
+#except:
+#    logging.error('could not load radios.')
 
 rpc_message_client = RabbitRpcMessageClient('localhost', 'radio-player-rpc')
 
@@ -36,11 +38,11 @@ def get_radios():
         request = RadiosRequest()
         response = rpc_message_client.call(request)
 
-        response = make_response(
+        api_response = make_response(
             jsonify(response),
             200,
         )
-        return response
+        return api_response
     except:
         logging.error('error in /radios')
         return make_response('', 500)
@@ -51,19 +53,16 @@ def get_radios():
 def play_radio(radio_id):
     try:
         logging.debug(f'/api/radios/{radio_id}/ play called')
-        radio = get_item_with_id(radio_id)
 
-        if radio is None:
-            logging.error(f'radio with id: {radio_id} was not found')
-            return make_response('radio with id: {radio_id} was not found', 500)
+        request = PlayRequest()
+        response = rpc_message_client.call(request)
 
-        send_message('play', radio['url'])
-
-        response = make_response(
-            '{}',
+        api_response = make_response(
+            jsonify(response),
             200,
         )
-        return response
+
+        return api_response
     except:
         logging.error(f'/api/radios/{radio_id}/')
         return make_response('', 500)
@@ -74,13 +73,16 @@ def play_radio(radio_id):
 def stop_radio():
     try:
         logging.debug('/api/radios/stop called')
-        send_message('stop', '')
 
-        response = make_response(
-            '',
+        request = StopRequest()
+        response = rpc_message_client.call(request)
+
+        api_response = make_response(
+            jsonify(response),
             200,
         )
-        return response
+
+        return api_response
     except:
         logging.error('/api/radios/stop/')
         return make_response('', 500)
@@ -91,13 +93,16 @@ def stop_radio():
 def change_volume(volume):
     try:
         logging.debug(f'/api/radios/volume/{volume}/ called')
-        send_message('volume', volume)
 
-        response = make_response(
-            '',
+        request = ChangeVolumeRequest(volume)
+        response = rpc_message_client.call(request)
+
+        api_response = make_response(
+            jsonify(response),
             200,
         )
-        return response
+
+        return api_response
     except:
         logging.error(f'/api/radios/volume/{volume}/')
         return make_response('', 500)
@@ -107,27 +112,16 @@ def change_volume(volume):
 def shutdown():
     try:
         logging.debug(f'/api/system/shutdown/ called')
-        send_message('shutdown', '')
 
-        response = make_response(
-            '',
+        request = ShutdownRequest()
+        response = rpc_message_client.call(request)
+
+        api_response = make_response(
+            jsonify(response),
             200,
         )
-        return response
+
+        return api_response
     except:
         logging.error(f'/api/system/shutdown/')
         return make_response('', 500)
-
-# GET /api/info
-# Info
-#   status: stoped, playing, loading
-#   radio: <int>
-#   information: <string>
-
-
-def get_item_with_id(id):
-    for radio in radios:
-        if radio['id'] == id:
-            return radio
-
-    return None

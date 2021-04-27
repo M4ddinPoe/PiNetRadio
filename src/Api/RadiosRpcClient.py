@@ -1,10 +1,16 @@
+import json
 import uuid
 
 import pika
 import logging
 
+from src.Messages.RadioPlayerRpcMessage import RadioPlayerRpcMessage
+
+
 class RadioPlayerRpcClient:
     def __init__(self):
+        self.logger = logging.getLogger('radio_player')
+
         self.connection = pika.BlockingConnection(
             pika.ConnectionParameters(host='localhost'))
 
@@ -19,37 +25,27 @@ class RadioPlayerRpcClient:
             auto_ack=True)
 
     def on_response(self, ch, method, props, body):
-        #todo: unpack json
-        return []
+        message = RadioPlayerRpcMessage.from_json(json.loads(body))
+        return message
 
-    def call(self, n):
-        self.response = None
-        self.corr_id = str(uuid.uuid4())
-        self.channel.basic_publish(
-            exchange='',
-            routing_key='rpc_queue',
-            properties=pika.BasicProperties(
-                reply_to=self.callback_queue,
-                correlation_id=self.corr_id,
-            ),
-            body=str(n))
-        while self.response is None:
-            self.connection.process_data_events()
-        return self.response
+    def call(self, request):
+        try:
+            request_data = json.dumps(request, default=lambda o: o.__dict__)
+            self.logger.debug(f'send message to player: {request_data}')
 
-def send_message(command, data):
-    try:
-        logger = logging.getLogger('radio_player')
-        logger.debug(f'try send {command} command with data: {data}')
-        connection = pika.BlockingConnection(
-            pika.ConnectionParameters(host='localhost'))
-        channel = connection.channel()
-
-        channel.exchange_declare(exchange='radio-player', exchange_type='fanout')
-
-        message = '{ "command":"%s", "data": "%s" }' %(command, str(data))
-        channel.basic_publish(exchange='radio-player', routing_key='', body=message)
-        print(" [x] Sent %r" % message)
-        connection.close()
-    except:
-        logger.error(f'cloud not send {command} command with data: {data}')
+            self.response = None
+            self.corr_id = str(uuid.uuid4())
+            self.channel.basic_publish(
+                exchange='',
+                routing_key='rpc_queue',
+                properties=pika.BasicProperties(
+                    reply_to=self.callback_queue,
+                    correlation_id=self.corr_id,
+                ),
+                body=str(request_data))
+            while self.response is None:
+                self.connection.process_data_events()
+            return self.response
+        except:
+            self.logger.error(f'could not send {request_data}')
+            raise
