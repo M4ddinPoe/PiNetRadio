@@ -62,7 +62,8 @@ class TestRadioPlayerRpcMessageSerialization(unittest.TestCase):
     def _execute_deserialize_test(self, serialized_json, message_data_type):
         message_data_type_name = message_data_type.__name__
 
-        decoded_message = RadioPlayerRpcMessage.from_json(json.loads(serialized_json))
+        loaded_json = json.loads(serialized_json)
+        decoded_message = RadioPlayerRpcMessage.from_json(loaded_json)
 
         self.assertEqual(message_data_type_name, decoded_message.data_type)
         self.assertTrue(isinstance(decoded_message.data, message_data_type))

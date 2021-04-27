@@ -23,16 +23,15 @@ class RabbitRpcMessageServer:
         self.channel.start_consuming()
 
     def handle_message(self, ch, method, props, body):
-        #self.logger.info('received message')
-        #self.logger.debug(" [x] %r" % body)
-
         message = RadioPlayerRpcMessage.from_json(json.loads(body))
 
         response = self.message_handler(message)
-        response_data = json.dumps(response, default=lambda o: o.__dict__)
+
+        message = RadioPlayerRpcMessage(data=response)
+        response_data = json.dumps(message, default=lambda o: o.__dict__)
 
         ch.basic_publish(exchange='',
                          routing_key=props.reply_to,
                          properties=pika.BasicProperties(correlation_id=props.correlation_id),
-                         body=str(response_data))
+                         body=response_data)
         ch.basic_ack(delivery_tag=method.delivery_tag)

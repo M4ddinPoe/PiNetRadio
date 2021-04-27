@@ -1,4 +1,5 @@
 #!flask/bin/python
+import json
 import logging
 from flask import Flask, jsonify, make_response
 from flask_cors import CORS, cross_origin
@@ -20,13 +21,6 @@ app.config['CORS_HEADERS'] = 'Content-Type'
 
 logging.info('api started')
 
-#try:
-#    radios = RadioLoader().load()
-#    logging.debug('loaded radios:')
-#    logging.debug(radios)
-#except:
-#    logging.error('could not load radios.')
-
 rpc_message_client = RabbitRpcMessageClient('localhost', 'radio-player-rpc')
 
 @app.route('/api/radios')
@@ -38,14 +32,16 @@ def get_radios():
         request = RadiosRequest()
         response = rpc_message_client.call(request)
 
+        response_body = json.dumps(response.radios, default=lambda o: o.__dict__)
         api_response = make_response(
-            jsonify(response),
+            response_body,
             200,
         )
         return api_response
-    except:
-        logging.error('error in /radios')
-        return make_response('', 500)
+    except Exception as e:
+        message = 'error in /radios' + str(e)
+        logging.error(message)
+        return make_response(message, 500)
 
 
 @app.route('/api/radios/<int:radio_id>/play', methods=['GET'])
@@ -54,18 +50,20 @@ def play_radio(radio_id):
     try:
         logging.debug(f'/api/radios/{radio_id}/ play called')
 
-        request = PlayRequest()
+        request = PlayRequest(radio_id)
         response = rpc_message_client.call(request)
 
+        response_body = json.dumps(response, default=lambda o: o.__dict__)
         api_response = make_response(
-            jsonify(response),
+            response_body,
             200,
         )
 
         return api_response
-    except:
-        logging.error(f'/api/radios/{radio_id}/')
-        return make_response('', 500)
+    except Exception as e:
+        message = 'error in /radios' + str(e)
+        logging.error(message)
+        return make_response(message, 500)
 
 
 @app.route('/api/radios/stop', methods=['GET'])
@@ -77,8 +75,10 @@ def stop_radio():
         request = StopRequest()
         response = rpc_message_client.call(request)
 
+        response_body = json.dumps(response, default=lambda o: o.__dict__)
+
         api_response = make_response(
-            jsonify(response),
+            response_body,
             200,
         )
 
@@ -97,8 +97,10 @@ def change_volume(volume):
         request = ChangeVolumeRequest(volume)
         response = rpc_message_client.call(request)
 
+        response_body = json.dumps(response, default=lambda o: o.__dict__)
+
         api_response = make_response(
-            jsonify(response),
+            response_body,
             200,
         )
 
@@ -116,8 +118,10 @@ def shutdown():
         request = ShutdownRequest()
         response = rpc_message_client.call(request)
 
+        response_body = json.dumps(response, default=lambda o: o.__dict__)
+
         api_response = make_response(
-            jsonify(response),
+            response_body,
             200,
         )
 

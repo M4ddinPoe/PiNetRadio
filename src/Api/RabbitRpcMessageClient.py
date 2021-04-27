@@ -1,6 +1,9 @@
+import json
 import uuid
 
 import pika
+
+from src.Messages.RadioPlayerRpcMessage import RadioPlayerRpcMessage
 
 
 class RabbitRpcMessageClient(object):
@@ -22,11 +25,16 @@ class RabbitRpcMessageClient(object):
 
     def on_response(self, ch, method, props, body):
         if self.corr_id == props.correlation_id:
-            self.response = body
+            message = RadioPlayerRpcMessage.from_json(json.loads(body))
+            self.response = message.data
 
-    def call(self, n):
+    def call(self, request):
         self.response = None
         self.corr_id = str(uuid.uuid4())
+
+        message = RadioPlayerRpcMessage(data=request)
+        data = json.dumps(message, default=lambda o: o.__dict__)
+
         self.channel.basic_publish(
             exchange='',
             routing_key=self.queue_name,
@@ -34,7 +42,7 @@ class RabbitRpcMessageClient(object):
                 reply_to=self.callback_queue,
                 correlation_id=self.corr_id,
             ),
-            body=str(n))
+            body=data)
         while self.response is None:
             self.connection.process_data_events()
-        return int(self.response)
+        return self.response
