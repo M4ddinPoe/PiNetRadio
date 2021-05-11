@@ -1,6 +1,7 @@
 import json
 
-from src.Player.Core.Model.PlayerInfo import PlayerInfo, StoredPlayerInfo
+from src.Player.Core.Model.PlayerInfo import PlayerInfo
+from src.Player.Core.Model.StoredPlayerInfo import StoredPlayerInfo
 from src.Player.Core.Model.Radio import Radio
 
 
@@ -36,7 +37,9 @@ class RadioPlayerRepository:
             data = json.load(read_file)
 
         data["volume"] = player_info.volume
-        data["radio"] = player_info.radio.id
+
+        if player_info.radio is not None:
+            data["radio"] = player_info.radio.id
 
         with open(self.player_file, "w") as jsonFile:
             json.dump(data, jsonFile)

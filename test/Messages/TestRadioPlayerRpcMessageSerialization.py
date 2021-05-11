@@ -1,11 +1,14 @@
 import json
 import unittest
 
+from src.Messages.InfoRequest import InfoRequest
+from src.Messages.InfoResponse import InfoResponse
 from src.Messages.PlayRequest import PlayRequest
 from src.Messages.PlayResponse import PlayResponse
 from src.Messages.RadioPlayerRpcMessage import RadioPlayerRpcMessage
 from src.Messages.RadiosRequest import RadiosRequest
 from src.Messages.RadiosResponse import RadiosResponse
+from src.Player.Core.Model.PlayerInfo import PlayerInfo
 from src.Player.Core.Model.Radio import Radio
 
 
@@ -51,6 +54,23 @@ class TestRadioPlayerRpcMessageSerialization(unittest.TestCase):
     def test_deserialize_radios_response(self):
         serialized = '{"data_type": "RadiosResponse", "data": {"radios": [{"id": 1, "title": "Radio 1", "url": "http://radio1.loc"}, {"id": 2, "title": "Radio 2", "url": "http://radio2.loc"}]}}'
         self._execute_deserialize_test(serialized, RadiosResponse)
+
+    def test_serialize_infos_request(self):
+        expected = '{"data_type": "InfoRequest", "data": {}}'
+        message_data = InfoRequest()
+
+        self._execute_serialize_test(expected, message_data)
+
+    def test_deserialize_infos_request(self):
+        serialized = '{"data_type": "InfoRequest", "data": {}}'
+        self._execute_deserialize_test(serialized, InfoRequest)
+
+    def test_serialize_infos_response(self):
+        expected = '{"data_type": "InfoResponse", "data": {"info": {"volume": 50, "radio": {"id": 1, "title": "Radio 1", "url": "http://radio1.loc"}, "status": "stopped"}}}'
+        message_data = InfoResponse(
+            PlayerInfo(Radio(1, 'Radio 1', 'http://radio1.loc'), 50, "stopped"))
+
+        self._execute_serialize_test(expected, message_data)
 
     def _execute_serialize_test(self, expected_json, message_data_object):
         message = RadioPlayerRpcMessage(data=message_data_object)

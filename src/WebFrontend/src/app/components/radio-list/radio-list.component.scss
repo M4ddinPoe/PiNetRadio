@@ -16,12 +16,40 @@
 
 .header {
   grid-area: header;
+
+  display: grid;
+  grid-template-columns:80% 20%;
+  grid-template-areas:
+    "headline shutdown";
 }
 
 .header h1 {
+  grid-area: headline;
+
   margin: 0.5em 0.2em;
   font-size: 3em;
   font-stretch: ultra-expanded;
+}
+
+.header object {
+  grid-area: shutdown;
+
+  margin: 2em;
+  height: 5em;
+  width: 5em;
+
+  cursor: pointer;
+}
+
+.header .button {
+  grid-area: shutdown;
+  cursor: pointer;
+
+  margin: 2em;
+  height: 5em;
+  width: 5em;
+
+  z-index: 99;
 }
 
 .radio-list {

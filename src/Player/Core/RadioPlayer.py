@@ -2,7 +2,6 @@ import vlc
 import os
 
 from src.Player.Core.Model.PlayerInfo import PlayerInfo
-from src.Player.Core.Model.Status import *
 
 
 class RadioPlayer:
@@ -16,7 +15,7 @@ class RadioPlayer:
         stored_player_info = self.repository.get_stored_player_info()
         stored_radio = next((r for r in self.radios if r.id == stored_player_info.radio_id), None)
 
-        self.info = PlayerInfo(stored_radio, stored_player_info.volume)
+        self.info = PlayerInfo(stored_radio, stored_player_info.volume, 'Stopped')
 
 
     def get_radios(self):
@@ -26,7 +25,7 @@ class RadioPlayer:
         radio = next((r for r in self.radios if r.id == id), None)
 
         self.info.radio = radio
-        self.info.status = Status.Loading
+        self.info.status = "Loading"
 
         self._save_status()
 
@@ -35,13 +34,13 @@ class RadioPlayer:
 
         self.player.play()
 
-        self.info.status = Status.Playing
+        self.info.status = "Playing"
 
         self._save_status()
 
     def stop(self):
         self.player.stop()
-        self.info.status = Status.Stopped
+        self.info.status = "Stopped"
 
         self._save_status()
 
@@ -58,14 +57,10 @@ class RadioPlayer:
         return self.info
 
     def shutdown(self):
-        self.info.status = Status.ShuttingDown
+        self.info.status = "ShuttingDown"
         self._save_status()
         self.stop()
         os.system('shutdown -s')
 
     def _save_status(self):
-        #try:
         self.repository.set_player_info(self.info)
-        #except:
-        #    print("Error while saving status")
-

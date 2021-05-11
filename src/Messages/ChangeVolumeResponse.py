@@ -2,4 +2,6 @@ from src.Messages.MessageData import MessageData
 
 
 class ChangeVolumeResponse(MessageData):
-    pass
+    def __init__(self, success=True, error=''):
+        self.success = success
+        self.error = error

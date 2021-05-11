@@ -1,6 +1,13 @@
 <div class="main">
   <div class="header">
     <h1>Pi - NetRadio</h1>
+
+    <object type="image/svg+xml" data="http://localhost:5000/static/shutdown_button.svg" class="logo">
+      Shutdown
+    </object>
+
+    <div class="button" (click)="shutdown()">
+    </div>
   </div>
 
   <div class="radio-list">
@@ -18,10 +25,10 @@
   </div>
 
   <div class="player">
-    <object *ngIf="isPlaying"  type="image/svg+xml" data="http://localhost:5000/static/stop_button.svg" class="logo">
+    <object *ngIf="isPlaying" type="image/svg+xml" data="http://localhost:5000/static/stop_button.svg" class="logo">
       Stop
     </object>
-    <object *ngIf="!isPlaying"type="image/svg+xml" data="http://localhost:5000/static/play_button.svg" class="logo">
+    <object *ngIf="!isPlaying" type="image/svg+xml" data="http://localhost:5000/static/play_button.svg" class="logo">
       Play
     </object>
     <div class="button" (click)="playOrStop()">

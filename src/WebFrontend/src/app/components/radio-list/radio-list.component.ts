@@ -31,6 +31,19 @@ export class RadioListComponent implements OnInit {
 
     this.currentRadio = this.localStorage.getLastRadio();
     this.volume = this.localStorage.getLastVolume();
+
+    setInterval( async () => {
+      const info = await this.radioRepository.info();
+
+      this.currentRadio = info.radio;
+      this.isPlaying = info.status === 'Playing';
+
+    }, 1000);
+  }
+
+  public async shutdown() {
+    await this.radioRepository.stopRadio();
+    await this.radioRepository.shutdown();
   }
 
   public async playRadio(radio: Radio): Promise<void> {
@@ -46,7 +59,7 @@ export class RadioListComponent implements OnInit {
       await this.radioRepository.stopRadio();
     }
     else {
-      await this.radioRepository.playRadio(0);
+      await this.radioRepository.playRadio(this.currentRadio.id);
     }
 
     this.isPlaying = !this.isPlaying;

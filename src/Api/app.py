@@ -7,6 +7,7 @@ from flask_cors import CORS, cross_origin
 from src.Api.RabbitRpcMessageClient import RabbitRpcMessageClient
 from src.Logger.Logger import configure_logging
 from src.Messages.ChangeVolumeRequest import ChangeVolumeRequest
+from src.Messages.InfoRequest import InfoRequest
 from src.Messages.PlayRequest import PlayRequest
 from src.Messages.RadiosRequest import RadiosRequest
 from src.Messages.ShutdownRequest import ShutdownRequest
@@ -89,11 +90,11 @@ def stop_radio():
         return make_response(message, 500)
 
 
-@app.route('/api/radios/volume/<int:volume>', methods=['GET'])
+@app.route('/api/volume/<int:volume>', methods=['GET'])
 @cross_origin()
 def change_volume(volume):
     try:
-        logging.debug(f'/api/radios/volume/{volume}/ called')
+        logging.debug(f'/api/volume/{volume}/ called')
 
         request = ChangeVolumeRequest(volume)
         response = rpc_message_client.call(request)
@@ -108,6 +109,28 @@ def change_volume(volume):
         return api_response
     except Exception as e:
         message = 'error in /radios' + str(e)
+        logging.error(message)
+        return make_response(message, 500)
+
+@app.route('/api/info', methods=['GET'])
+@cross_origin()
+def get_info():
+    try:
+        logging.debug(f'/api/info/ called')
+
+        request = InfoRequest()
+        response = rpc_message_client.call(request)
+
+        response_body = json.dumps(response, default=lambda o: o.__dict__)
+
+        api_response = make_response(
+            response_body,
+            200,
+        )
+
+        return api_response
+    except Exception as e:
+        message = 'error in /api/info' + str(e)
         logging.error(message)
         return make_response(message, 500)
 
